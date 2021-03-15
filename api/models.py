@@ -1,4 +1,19 @@
 from django.db import models
+import string
+import random
+
+def generate_unique_code():
+    length = 6
+
+    while True:
+        # Generates random code with uppercase ascii chars of length k
+        code = ''.join(random.choices(string.ascii_uppercase), k=length)
+        # Room.objects gives all entries in Room table
+        if Room.object.filter(code=code).count() == 0:
+            break
+
+    return code
+
 
 # Create your models here.
 class Room(models.Model):

@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('MUSO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['musohub.herokuapp.com'] # for postgres
+ALLOWED_HOSTS = ['127.0.0.1', 'musohub.herokuapp.com'] # for postgres
 
 
 # Application definition

@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import main
+from .views import RoomView
 
 urlpatterns = [
-    path('home', main) # for home route request call main function from views
+    path('room', RoomView.as_view()) # for home route request call main function from views
 ]
