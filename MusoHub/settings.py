@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 import dj_database_url # for postgres
+import psycopg2
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-MUSO_SECRET_KEY = os.environ.get('MUSO_SECRET_KEY')
+SECRET_KEY = os.environ.get('MUSO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -42,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig', # .ApiConfig is the name of the class configuring api in apps.py
     'rest_framework',
-    'whitenoise.runserver_nostatic' # for postgres
 ]
 
 MIDDLEWARE = [
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
+    #'whitenoise.middleware.WhiteNoiseMiddleware'  <----prob for postgres. delete if unneeded
 ]
 
 ROOT_URLCONF = 'MusoHub.urls'
@@ -82,12 +82,16 @@ WSGI_APPLICATION = 'MusoHub.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'db919kpk5b5s7m',
+        'USER': 'etgyqbcpbwbsyv',
+        'PASSWORD': '906c02711701a35c881dbd4e06a4e23aa4f7876276c96b22f408835fd0f4af5d',
+        'HOST': 'ec2-3-91-127-228.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
-db_from_env = dj_database_url.config(conn_max_age=600) # for postgres
-DATABASES['default'].update(db_from_env) # for postgres
+#db_from_env = dj_database_url.config(conn_max_age=600) # for postgres
+#DATABASES['default'].update(db_from_env) # for postgres
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
