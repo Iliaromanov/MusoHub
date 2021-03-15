@@ -18,5 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
+    # any url thats not api or admin will be directed to frontend directory
+    path('', include('frontend.urls')) 
 ]

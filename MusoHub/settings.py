@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig', # .ApiConfig is the name of the class configuring api in apps.py
     'rest_framework',
+    'frontend.apps.FrontendConfig'
 ]
 
 MIDDLEWARE = [
