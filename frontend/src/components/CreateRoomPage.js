@@ -50,7 +50,7 @@ export default class CreateRoomPage extends Component {
         };
         fetch('/api/create-room', requestOptions).then((response) => 
             response.json()
-        ).then((data) => console.log(data));
+        ).then((data) => this.props.history.push('/room/' + data.code));
     }
 
     render() {
@@ -108,7 +108,7 @@ export default class CreateRoomPage extends Component {
             <Grid item xs={12} align="center">
                 <Button 
                     color="primary" 
-                    variant="contained" 
+                    variant="contained"
                     onClick={this.handleRoomButtonPressed}
                 >
                     Create A Room

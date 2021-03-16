@@ -5,5 +5,6 @@ urlpatterns = [
     # any url thats not api or admin will be directed to frontend directory
     path('', index),
     path('join', index),
-    path('create', index)
+    path('create', index),
+    path('room/<str:roomCode>', index)
 ]
