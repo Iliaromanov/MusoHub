@@ -1,16 +1,22 @@
 import React, { Component } from "react";
-import { render } from  "react-dom"
+import { render } from  "react-dom";
+import HomePage from "./HomePage";
 
-export default class App extends Component {
+
+// First component, usually called App, is the entry component
+export default class App extends Component { 
     constructor(props) {
         super(props);
     }
 
     render() {
-        return (<h1>This is a React component!</h1>);
+        return (
+        <div>
+            <HomePage />
+        </div>);
     }
 }
 
 // Finds elements with id of div and renders the above App class within them
 const appDiv = document.getElementById("app");
-render(<App />, appDiv);
+render(<App  />, appDiv); 
