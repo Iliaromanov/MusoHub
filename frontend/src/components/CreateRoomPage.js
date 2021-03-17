@@ -40,6 +40,7 @@ export default class CreateRoomPage extends Component {
     }
 
     handleRoomButtonPressed() {
+        // Setup request
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -48,6 +49,7 @@ export default class CreateRoomPage extends Component {
                 guest_can_pause: this.state.guestCanPause
             }),
         };
+        // Send the request to the backend
         fetch('/api/create-room', requestOptions).then((response) => 
             response.json()
         ).then((data) => this.props.history.push('/room/' + data.code));
