@@ -1,7 +1,9 @@
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.views import APIView # generic api view
 from rest_framework.response import Response
+from django.http import JsonResponse
 
 from .serializers import RoomSerializer, CreateRoomSerializer
 from .models import Room
@@ -93,3 +95,17 @@ class CreateRoomView(APIView):
 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class UserInRoom(APIView):
+    def get(self, request, format=None):
+        # Ensure user in session
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+
+        # Save and return the code of the room in which the user is in if it exists
+        room = self.request.session.get('room_code')
+        data = {
+            'code': room
+        }
+        # JsonResponse serializes a Python dictionary and returns it in json format
+        return JsonResponse(data=data, status=status.HTTP_200_OK)
