@@ -17,7 +17,8 @@ export default class HomePage extends Component {
         super(props);
         this.state = {
             roomCode: null,
-        }
+        };
+        this.clearRoomCode = this.clearRoomCode.bind(this);
     }
 
     // Async is used to make sure that the rest of the application continues to
@@ -55,6 +56,12 @@ export default class HomePage extends Component {
         );
     }
 
+    clearRoomCode() {
+        this.setState({
+            roomCode: null,
+        });
+    }
+
     render() {
         // Must use exact keyword in routes or else all similar routes will go to the same place
         return (
@@ -73,7 +80,12 @@ export default class HomePage extends Component {
                 />
                 <Route path='/join' component={JoinRoomPage} />
                 <Route path='/create' component={CreateRoomPage} />
-                <Route path="/room/:roomCode" component={Room} />
+                <Route
+                    path="/room/:roomCode"
+                    render={(props) => {
+                    return <Room {...props} leaveRoomCallback={this.clearRoomCode} />;
+                    }}
+                />
             </Switch>
         </Router>);
     }
