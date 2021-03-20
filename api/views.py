@@ -151,7 +151,7 @@ class UpdateRoom(APIView):
             votes_to_skip = serializer.data.get('votes_to_skip')
             code = serializer.data.get('code')
 
-            queryset = Room.objects.filer(code=code)
+            queryset = Room.objects.filter(code=code)
             if queryset.exists():
 
                 room = queryset[0]
