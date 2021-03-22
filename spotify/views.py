@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from requests import Request, post
 
-from .util import update_or_create_user_tokens
+from .util import is_spotify_authenticated, update_or_create_user_tokens, is_spotify_authenticated
 from .credentials import REDIRECT_URI, CLIENT_ID, CLIENT_SECRET
 
 
@@ -61,10 +61,17 @@ def spotify_callback(request, fromat=None):
     update_or_create_user_tokens(
         request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
+    # To redirect to a page in a different app, do {app name}:{page}
+    # eg. frontend:room
+    # In this case we just want to redirect to the homepage so nothing after :
     return redirect('frontend:')
 
 
-
+# Endpoint to return json response 
+class IsAuthenticated(APIView):
+    def get(self, request, format=None):
+        is_authenticated = is_spotify_authenticated(self.request.session.session_key)
+        return Response({'status:': is_authenticated}, status=status.HTTP_200_OK)
 
 
     
