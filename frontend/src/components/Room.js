@@ -11,6 +11,7 @@ export default class Room extends Component {
             guestCanPause: false,
             isHost: false,
             showSettings: false,
+            spotifyAuthenticated: false,
         };
         // Match is added by router (its what was used to get to this page)
         this.roomCode = this.props.match.params.roomCode;
@@ -19,26 +20,48 @@ export default class Room extends Component {
         this.renderSettingsButton = this.renderSettingsButton.bind(this);
         this.renderSettings = this.renderSettings.bind(this);
         this.getRoomDetails = this.getRoomDetails.bind(this);
+        this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.getRoomDetails();
     }
 
     getRoomDetails () {
         fetch('/api/get-room' + '?code=' + this.roomCode)
-        .then((response) => {
-            if (!response.ok) {
-                this.props.leaveRoomCallback();
-                this.props.history.push("/");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            this.setState({
-                votesToSkip: data.votes_to_skip,
-                guestCanPause: data.guest_can_pause,
-                isHost: data.is_host, 
+            .then((response) => {
+                if (!response.ok) {
+                    this.props.leaveRoomCallback();
+                    this.props.history.push("/");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                this.setState({
+                    votesToSkip: data.votes_to_skip,
+                    guestCanPause: data.guest_can_pause,
+                    isHost: data.is_host, 
+                });
+                if (this.state.isHost) {
+                    this.authenticateSpotify();  
+                }
             });
-        });
     }
+
+    authenticateSpotify() {
+        fetch("/spotify/is-authenticated")
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            this.setState({ spotifyAuthenticated: data.status });
+            console.log(data.status);
+            if (!data.status) {
+              fetch("/spotify/get-auth-url")
+                .then((response) => response.json())
+                .then((data) => {
+                  // Native Js way of redirecting
+                  window.location.replace(data.url);
+                });
+            }
+          });
+      }
 
     leaveButtonPressed() {
         const requestOptions = {

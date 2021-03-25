@@ -39,7 +39,7 @@ def spotify_callback(request, fromat=None):
     # can be used to display error if we get one from the response
     error = request.GET.get('error')
 
-    # This actually sends a requests and generates and saves a response
+    # This actually sends a request and generates and saves a response
     response = post('https://accounts.spotify.com/api/token', data={
         'grant_type': 'authorization_code',
         'code': code,
@@ -50,7 +50,7 @@ def spotify_callback(request, fromat=None):
 
     access_token = response.get('access_token')
     token_type = response.get('token_type')
-    refresh_token = response.get('refresh.token')
+    refresh_token = response.get('refresh_token')
     expires_in = response.get('expires_in')
     error = response.get('error')
 
@@ -71,7 +71,7 @@ def spotify_callback(request, fromat=None):
 class IsAuthenticated(APIView):
     def get(self, request, format=None):
         is_authenticated = is_spotify_authenticated(self.request.session.session_key)
-        return Response({'status:': is_authenticated}, status=status.HTTP_200_OK)
+        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
 
 
     

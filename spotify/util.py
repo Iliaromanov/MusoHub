@@ -5,11 +5,11 @@ from django.utils import timezone
 from datetime import timedelta
 from requests import post
 
-from .models import SpotifyToken
+from .models import SpotifyTokens
 
 # Searches SpotifyToken table for current user and returns their token info
 def get_user_tokens(session_id):
-    user_tokens = SpotifyToken.objects.filter(user=session_id)
+    user_tokens = SpotifyTokens.objects.filter(user=session_id)
     if user_tokens.exists():
         return user_tokens[0]
     else:
@@ -29,7 +29,7 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
         tokens.token_type = token_type
         tokens.save(update_fields=['access_token', 'refresh_token', 'expires_in', 'token_type'])
     else:
-        tokens = SpotifyToken(user=session_id, 
+        tokens = SpotifyTokens(user=session_id, 
                               access_token=access_token, 
                               refresh_token=refresh_token,
                               token_type=token_type,
@@ -64,6 +64,7 @@ def refresh_spotify_token(session_id):
     access_token = response.get('access_token')
     token_type = response.get('token_type')
     expires_in = response.get('expires_in')
+    #print("THIS IS EXPIRES IN =========" + expires_in)
     refresh_token = response.get('refresh_token')
 
     update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token)
