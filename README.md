@@ -11,5 +11,5 @@ MusoHub is a full-stack collaborative music playing web apllication that allows 
 
 <!-- FOR RESUME
 - Utilized Django rest framework to develop custom api endpoints to provide information about current room details, currently playing songs, and other components of the web app.
-- 
+- ^^or can just start at "Developed custom api..."^^
 -->
