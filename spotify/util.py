@@ -1,11 +1,14 @@
 # Helper functions for views.py
 import requests
+from rest_framework import response
 from spotify.credentials import CLIENT_ID, CLIENT_SECRET
 from django.utils import timezone
 from datetime import timedelta
-from requests import post
+from requests import post, put, get
 
 from .models import SpotifyTokens
+
+BASE_URL = "https://api.spotify.com/v1/me/"
 
 # Searches SpotifyToken table for current user and returns their token info
 def get_user_tokens(session_id):
@@ -42,12 +45,12 @@ def is_spotify_authenticated(session_id):
     tokens = get_user_tokens(session_id)
     if tokens:
         expiry = tokens.expires_in
-        # If tokens expired, then refresh token
+        # If token expired, refresh token
         if expiry <= timezone.now():
             refresh_spotify_token(session_id)
 
         return True
-    
+
     return False
 
 # Refreshes a users spotify token
@@ -64,7 +67,27 @@ def refresh_spotify_token(session_id):
     access_token = response.get('access_token')
     token_type = response.get('token_type')
     expires_in = response.get('expires_in')
-    #print("THIS IS EXPIRES IN =========" + expires_in)
-    refresh_token = response.get('refresh_token')
+    refresh_token = response.get('refresh_token') # comment this line out to fix 24h error
 
-    update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token)
+    update_or_create_user_tokens(
+        session_id, access_token, token_type, expires_in, refresh_token)
+
+
+# Function to to execute spotify api requests
+def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
+    tokens = get_user_tokens(session_id)
+    print(tokens.access_token)
+    headers = {'Content-Type': 'application/json',
+               'Authorization': "Bearer " + tokens.access_token}
+
+    if post_:
+        post(BASE_URL + endpoint, headers=headers)
+    if put_:
+        put(BASE_URL + endpoint, headers=headers)
+
+    response = get(BASE_URL + endpoint, {}, headers=headers)
+    
+    try:
+        return response.json()
+    except:
+        return {'Error': 'Issue with request'}
