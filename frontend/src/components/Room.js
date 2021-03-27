@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Grid, Button, Typography } from '@material-ui/core';
 import CreateRoomPage from './CreateRoomPage';
+import MusicPlayer from './MusicPlayer';
 
 
 export default class Room extends Component {
@@ -12,6 +13,8 @@ export default class Room extends Component {
             isHost: false,
             showSettings: false,
             spotifyAuthenticated: false,
+            // Storing all information about current song in the state of this component
+            song: {}
         };
         // Match is added by router (its what was used to get to this page)
         this.roomCode = this.props.match.params.roomCode;
@@ -21,7 +24,22 @@ export default class Room extends Component {
         this.renderSettings = this.renderSettings.bind(this);
         this.getRoomDetails = this.getRoomDetails.bind(this);
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
+        this.getCurrentSong = this.getCurrentSong.bind(this);
         this.getRoomDetails();
+    }
+
+    // Lifecycle method (called once component has been loaded on screen)
+    componentDidMount() {
+        // Call getCurrentSong method every second
+        // This is called a pulling method and it is suboptimal
+        //   since for large numbers of users we would be making too many requests
+        // but since spotify api does not support web sockets this is the next best thing
+        this.interval = setInterval(this.getCurrentSong, 1000);
+    }
+
+    // Lifecycle method (called once component is about to be cleared)
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     getRoomDetails () {
@@ -51,7 +69,7 @@ export default class Room extends Component {
           .then((data) => {
             console.log(data);
             this.setState({ spotifyAuthenticated: data.status });
-            console.log(data.status);
+            //console.log(data.status);
             if (!data.status) {
               fetch("/spotify/get-auth-url")
                 .then((response) => response.json())
@@ -61,6 +79,21 @@ export default class Room extends Component {
                 });
             }
           });
+      }
+
+      getCurrentSong() {
+          fetch('/spotify/current-song')
+            .then((response) => {
+                if (!response.ok) {
+                    return {};
+                } else {
+                    return response.json();
+                }
+            })
+            .then((data) => {
+                this.setState({song: data});
+                console.log(data);
+            });
       }
 
     leaveButtonPressed() {
@@ -120,6 +153,8 @@ export default class Room extends Component {
         );
     }
 
+    // ...this.state.song is using the spread operator '...'
+    // to pass each value in song as a separate prop to MusicPlayer
     render() {
         if (this.state.showSettings) {
             return this.renderSettings();
@@ -131,21 +166,7 @@ export default class Room extends Component {
                         Code: {this.roomCode}
                     </Typography>
                 </Grid>
-                <Grid item xs={12} align="center">
-                    <Typography variant="h6" component="h6">
-                        Votes: {this.state.votesToSkip}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12} align="center">
-                    <Typography variant="h6" component="h6">
-                        Guest Can Pause: {this.state.guestCanPause.toString()}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12} align="center">
-                    <Typography variant="h6" component="h6">
-                        Host: {this.state.isHost.toString()}
-                    </Typography>
-                </Grid>
+                <MusicPlayer {...this.state.song} />
                 {this.state.isHost ? this.renderSettingsButton() : null}
                 <Grid item xs={12} align="center">    
                     <Button

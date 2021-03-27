@@ -74,9 +74,10 @@ def refresh_spotify_token(session_id):
 
 
 # Function to to execute spotify api requests
+# post and put arguments are optional (most of the time its a get request)
 def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     tokens = get_user_tokens(session_id)
-    print(tokens.access_token)
+    
     headers = {'Content-Type': 'application/json',
                'Authorization': "Bearer " + tokens.access_token}
 
