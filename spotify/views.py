@@ -1,3 +1,4 @@
+from os import stat
 from django.shortcuts import render, redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -127,4 +128,33 @@ class CurrentSong(APIView):
 
         return Response(song, status=status.HTTP_200_OK)
 
+
+class PauseSong(APIView):
+    # Put requests are for updating information and here I'm updating state of song
+    def put(self, request, format=None):
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+
+        # Check if the current user is room host 
+        #  or if room has play/pause enabled for guests
+        if self.request.session.session_key == room.host or room.guest_can_pause:
+            pause_song(room.host)
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response({}, status=status.HTTP_403_FORBIDDEN)
+
+
+class PlaySong(APIView):
+    # Put requests are for updating information and here I'm updating state of song
+    def put(self, request, format=None):
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+
+        # Check if the current user is room host 
+        #  or if room has play/pause enabled for guests
+        if self.request.session.session_key == room.host or room.guest_can_pause:
+            play_song(room.host)
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response({}, status=status.HTTP_403_FORBIDDEN)
 
