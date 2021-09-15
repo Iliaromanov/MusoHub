@@ -1,6 +1,6 @@
 The development for this project has been put on pause indefinetely due to some issues with spotify premium requirements :(
 
-Nevertheless, the React.js+MaterialUI front end is complete and the Django backend is almost fully functional with the exception of the play/pause/skip song features.
+Nevertheless, the React.js+MaterialUI frontend is complete and the Django backend is almost fully functional with the exception of the play/pause/skip song features.
 
 # 🎵 MusoHub
 
